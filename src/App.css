@@ -17,3 +17,36 @@
   color: #61dafb;
 }
 
+.search-bar {
+    width: 20rem;
+    background: #eeeeee;
+    border: none;
+    padding: 0.5rem;
+}
+
+.nominee-panel {
+    display: flex;
+}
+
+.movie-panel{
+    display: inline;
+    flex: 2;
+}
+
+.nominated-panel {
+    display: inline;
+    flex: 1;
+}
+
+.search-panel {
+    height: 15vh;
+}
+
+.movies {
+    overflow-y: scroll;
+    height: 55vh;
+}
+
+h2 {
+    font-size: 24px;
+}
