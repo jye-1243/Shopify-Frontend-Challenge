@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Movie from './Movie'
 
 const BarStyling = {  };
@@ -14,6 +14,17 @@ function App() {
     const [loading, setLoading] = useState(false);
     const [movies, setMovies] = useState([]);
     const [nominees, setNominees] = useState([]);
+    const [nomList, setNomList] = useState([]);
+    const [nomCount, setNomCount] = useState(0);
+    const [banner, setBanner] = useState(null);
+
+    const countRef = useRef();
+    countRef.current = nomCount;
+
+    const nomListRef = useRef();
+    nomListRef.current = nomList;
+    const nomRef = useRef();
+    nomRef.current = nominees;
 
     useEffect( () => {
 
@@ -41,43 +52,123 @@ function App() {
     }, [q]);
 
     useEffect(() => {
+        if (nomCount === 5) {
+            setBanner(
+                <div className="banner">
+                    <h2> Congratulations!  You've nominated 5 movies for the Shoppies! </h2>
+                </div>
+            );
+        }
+
+        else {
+            setBanner(null);
+        }
+    }, [nomCount]);
+
+    useEffect(() => {
         // Fix here
         let new_search = []
-        for (let i = 0; i < data.length; i++) {
-            let movie = data[i]
-            new_search.push(
-                <div>
-                    <Movie title={movie["Title"]} year={movie["Year"]} />
-                    <button
-                        onClick={
-                            () => {
-                                let newNoms = [];
 
-                                for (let j = 0; j < nominees.length; j++) {
-                                    newNoms.push(nominees[j]);
+
+        for (let i = 0; i < data.length; i++) {
+            let nominated = false;
+            
+            let movie = data[i]
+
+            // Fix here ?
+            for (let j = 0; j < nominees.length; j++) {
+                if (movie["imdbID"] === nomList[j]["id"]) {
+                    nominated = true;
+                    break;
+                }
+            }
+
+            new_search.push(
+                <Movie
+                    title={movie["Title"]}
+                    year={movie["Year"]}
+                    disabled={nominated}
+                    label="Nominate"
+                    onClick={
+                        () => {
+                            if (countRef.current < 5) {
+
+
+                                let newNoms = [];
+                                let newNomList = [];
+
+                                // Fix here
+                                for (let j = 0; j < nomRef.current.length; j++) {
+                                    newNoms.push(nomRef.current[j]);
+                                    newNomList.push(nomListRef.current[j]);
                                 }
 
                                 newNoms.push(
                                     <div>
-                                        <Movie title={movie["Title"]} year={movie["Year"]} />
-                                        <button> Remove </button>
-                                    </div>);
+                                        <Movie
+                                            title={movie["Title"]}
+                                            year={movie["Year"]}
+                                            label="Remove"
+                                            onClick={
+                                                () => {
+                                                    let index = 0;
+                                                    for (let j = 0; j < nomListRef.current.length; j++) {
 
+                                                        if (movie["imdbID"] === nomListRef.current[j]["id"]) {
+                                                            index = j;
+                                                        }
+                                                    }
+
+                                                    let updatedNomList = [];
+                                                    let updatedNominees = [];
+
+                                                    for (let j = 0; j < nomRef.current.length; j++) {
+                                                        if (j != index) {
+                                                            updatedNominees.push(nomRef.current[j]);
+                                                            updatedNomList.push(nomListRef.current[j]);
+                                                        }
+                                                    }
+
+                                                    setNominees(updatedNominees);
+                                                    setNomList(updatedNomList);
+                                                    setNomCount(countRef.current - 1);
+                                                }
+                                            }
+                                        />
+
+                                    </div>
+                                );
+
+                                newNomList.push(
+                                    {
+                                        id: movie["imdbID"],
+                                        Title: movie["Title"],
+                                        Year: movie["Year"]
+                                    }
+                                )
+
+                                console.log(countRef.current + 1);
+                                setNomCount(countRef.current + 1);
+                                setNomList(newNomList);
                                 setNominees(newNoms);
                             }
                         }
-                    > Nominate </button>
-                </div>
+                    }/>
             );
-        }
+        } 
+        console.log(nomList);
+        console.log(nominees);
         setMovies(new_search);
     }, [data, nominees])
+
 
     return (
         <div className="App">
             <header className="App-header">
                 <h1> SHOPPIES NOMINATIONS </h1>
             </header>
+
+            {banner}
 
             <div className="App-body">
                 <div className = "search-panel">
@@ -104,7 +195,7 @@ function App() {
                 <div className="nominee-panel">
                     <div className="movie-panel">
                         <h2> SEARCH RESULTS </h2>
-                        <div className = "movies">
+                        <div className = "movies-list">
                             {movies}
                         </div>
                         </div>

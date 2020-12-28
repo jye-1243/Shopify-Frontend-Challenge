@@ -17,6 +17,11 @@
   color: #61dafb;
 }
 
+.banner {
+    background-color: darkgray;
+    color: gold;
+}
+
 .search-bar {
     width: 20rem;
     background: #eeeeee;
@@ -42,11 +47,19 @@
     height: 15vh;
 }
 
-.movies {
-    overflow-y: scroll;
+.movies-list {
+    overflow-y: auto;
     height: 55vh;
 }
 
 h2 {
     font-size: 24px;
 }
+
+.movie-item {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 1px solid darkgray;
+    flex: 2;
+}
+
