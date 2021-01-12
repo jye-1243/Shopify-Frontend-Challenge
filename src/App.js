@@ -1,31 +1,27 @@
 import './App.css';
-import React, { useState, useEffect, useRef } from 'react'
-import Movie from './Movie'
+import React, { useState, useEffect } from 'react'
+import { useCookies } from 'react-cookie'
+import Nominees from './Nominees'
+import MovieSearch from './MovieSearch'
 
-const BarStyling = {  };
 const API_KEY = "677802be";
 
 function App() {
+
+    const [cookies, setCookie, removeCookie] = useCookies(['cookies']);
 
     const [value, setValue] = useState('');
     const [q, setQ] = useState('');
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [movies, setMovies] = useState([]);
-    const [nominees, setNominees] = useState([]);
-    const [nomList, setNomList] = useState([]);
-    const [nomCount, setNomCount] = useState(0);
+    //const [nomList, setNomList] = useState([]);
+    //const [nomCount, setNomCount] = useState(0);
+    const [nomList, setNomList] = useState(cookies.noms ? cookies.noms: []);
+    const [nomCount, setNomCount] = useState(cookies.count ? parseInt(cookies.count): 0);
     const [banner, setBanner] = useState(null);
 
-    const countRef = useRef();
-    countRef.current = nomCount;
-
-    const nomListRef = useRef();
-    nomListRef.current = nomList;
-    const nomRef = useRef();
-    nomRef.current = nominees;
-
+    // Figure out whats up here
     useEffect( () => {
 
         setLoading(true);
@@ -63,104 +59,10 @@ function App() {
         else {
             setBanner(null);
         }
+
+        let val = nomCount;
+        setCookie('count', val, { path: '/' });
     }, [nomCount]);
-
-    useEffect(() => {
-        // Fix here
-        let new_search = []
-
-
-        for (let i = 0; i < data.length; i++) {
-            let nominated = false;
-            
-            let movie = data[i]
-
-            // Fix here ?
-            for (let j = 0; j < nominees.length; j++) {
-                if (movie["imdbID"] === nomList[j]["id"]) {
-                    nominated = true;
-                    break;
-                }
-            }
-
-            new_search.push(
-                <Movie
-                    title={movie["Title"]}
-                    year={movie["Year"]}
-                    disabled={nominated}
-                    label="Nominate"
-                    onClick={
-                        () => {
-                            if (countRef.current < 5) {
-
-
-                                let newNoms = [];
-                                let newNomList = [];
-
-                                // Fix here
-                                for (let j = 0; j < nomRef.current.length; j++) {
-                                    newNoms.push(nomRef.current[j]);
-                                    newNomList.push(nomListRef.current[j]);
-                                }
-
-                                newNoms.push(
-                                    <div>
-                                        <Movie
-                                            title={movie["Title"]}
-                                            year={movie["Year"]}
-                                            label="Remove"
-                                            onClick={
-                                                () => {
-                                                    let index = 0;
-                                                    for (let j = 0; j < nomListRef.current.length; j++) {
-
-                                                        if (movie["imdbID"] === nomListRef.current[j]["id"]) {
-                                                            index = j;
-                                                        }
-                                                    }
-
-                                                    let updatedNomList = [];
-                                                    let updatedNominees = [];
-
-                                                    for (let j = 0; j < nomRef.current.length; j++) {
-                                                        if (j != index) {
-                                                            updatedNominees.push(nomRef.current[j]);
-                                                            updatedNomList.push(nomListRef.current[j]);
-                                                        }
-                                                    }
-
-                                                    setNominees(updatedNominees);
-                                                    setNomList(updatedNomList);
-                                                    setNomCount(countRef.current - 1);
-                                                }
-                                            }
-                                        />
-
-                                    </div>
-                                );
-
-                                newNomList.push(
-                                    {
-                                        id: movie["imdbID"],
-                                        Title: movie["Title"],
-                                        Year: movie["Year"]
-                                    }
-                                )
-
-                                console.log(countRef.current + 1);
-                                setNomCount(countRef.current + 1);
-                                setNomList(newNomList);
-                                setNominees(newNoms);
-                            }
-                        }
-                    }/>
-            );
-        } 
-        console.log(nomList);
-        console.log(nominees);
-        setMovies(new_search);
-    }, [data, nominees])
-
 
     return (
         <div className="App">
@@ -168,41 +70,124 @@ function App() {
                 <h1> SHOPPIES NOMINATIONS </h1>
             </header>
 
-            {banner}
-
             <div className="App-body">
-                <div className = "search-panel">
-                    <h2> Find your Movie: </h2>
-                    < input
-                        className="search-bar"
-                        type="text"
-                        key="search-bar"
-                        value={value}
-                        placeholder={"Movie Title"}
-                        onChange={(event) => setValue(event.target.value)}
-                        onKeyUp={(event) => {
-                            if (event.code === "Enter"){
-                                setQ(value);
-                            }
-                        }}
-                    />
+                <div className="main-bar">
+                    <div className = "search-panel">
+                        <h2> Find Your Movie: </h2>
+                        < input
+                            className="search-bar"
+                            type="text"
+                            key="search-bar"
+                            value={value}
+                            placeholder={"Movie Title"}
+                            onChange={(event) => setValue(event.target.value)}
+                            onKeyUp={(event) => {
+                                if (event.code === "Enter"){
+                                    setQ(value);
+                                }
+                            }}
+                        />
 
-                    <button onClick={() => setQ(value)}> 
-                        Search
-                    </button>
+                        <button className="main-btn"
+                            onClick={() => setQ(value)}> 
+                            Search
+                        </button>
+                     </div>
+                    <div className="cookies-bar">
+                        <button
+                            className="main-btn"
+                            onClick={
+                                () => {
+                                    setCookie('noms', [], { path: '/' });
+                                    setCookie('count', 0, { path: '/' });
+                                    setNomCount(0);
+                                    setNomList([]);
+                                }
+                            }>
+                            Reset Cookies
+                        </button>
+
+                        <button
+                            className="main-btn"
+                            onClick={
+                                () => {
+                                    removeCookie('noms');
+                                    removeCookie('count');
+                                }
+                            }>
+                        Remove Cookies
+                        </button>
+                    </div>
                 </div>
 
-                <div className="nominee-panel">
-                    <div className="movie-panel">
-                        <h2> SEARCH RESULTS </h2>
-                        <div className = "movies-list">
-                            {movies}
-                        </div>
-                        </div>
-                    <div className="nominated-panel">
-                        <h2> NOMINEES </h2>
+                {banner}
 
-                        {nominees}
+                <div className="movie-panel">
+                    <div className="result-panel">
+                        <h2 className="movie-header"> SEARCH RESULTS </h2>
+                        <MovieSearch
+                            data={data}
+                            nomList={nomList}
+                            onClick={
+                                (id, title, year) => {
+                                    if (nomCount < 5) {
+
+                                        let newNomList = [];
+
+                                        // Fix here
+                                        for (let j = 0; j < nomList.length; j++) {
+                                            newNomList.push(nomList[j]);
+                                        }
+
+                                        newNomList.push(
+                                            {
+                                                id: id,
+                                                Title: title,
+                                                Year: year
+                                            }
+                                        )
+
+                                        setNomCount(nomCount + 1);
+                                        setNomList(newNomList);
+
+                                        setCookie('noms', newNomList, { path: '/' });
+                                    }
+                                }
+                            }
+                        />
+                    </div>
+
+                    <div className="nominated-panel">
+                        <h2 className="movie-header"> NOMINEES </h2>
+
+                        <Nominees
+                            nominees={nomList}
+                            onClick={
+                                (id) => {
+                                    let index = 0;
+                                    for (let j = 0; j < nomList.length; j++) {
+
+                                        if (id === nomList[j]["id"]) {
+                                            index = j;
+                                        }
+                                    }
+
+                                    let updatedNomList = [];
+
+                                    for (let j = 0; j < nomList.length; j++) {
+                                        if (j !== index) {
+                                            updatedNomList.push(nomList[j]);
+                                        }
+                                    }
+
+                                    setNomList(updatedNomList);
+                                    setCookie('noms', updatedNomList, { path: '/' });
+                                    setNomCount(nomCount - 1);
+
+
+                                }
+                                            
+                            }/>
                     </div>
                 </div>
 
