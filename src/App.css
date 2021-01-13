@@ -10,7 +10,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 1vh;
+    font-size: calc(vMin);
     color: white;
     position: fixed;
     width: 100%;
