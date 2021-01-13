@@ -28,7 +28,7 @@ function App() {
         setError(null);
         setData([]);
 
-        fetch(`http://www.omdbapi.com/?s=${q}&apikey=${API_KEY}`)
+        fetch(`https://www.omdbapi.com/?s=${q}&apikey=${API_KEY}`)
             .then(resp => resp.json())
             .then(response => {
                 if (response.Response === 'False') {
