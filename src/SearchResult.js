@@ -15,7 +15,26 @@ function SearchResult(props) {
     }
 
     const [expand, setExpand] = useState(false);
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    fetch(`https://www.omdbapi.com/?i=${id}&apikey=${API_KEY}`)
+        .then(resp => resp.json())
+        .then(response => {
+            if (response.Response === 'False') {
+                setError(response.Error);
+            }
+            else {
+                setData(response);
+            }
+
+            setLoading(false);
+        })
+        .catch(({ message }) => {
+            setError(message);
+            setLoading(false);
+        }) 
 
     if (expand) {
          return (
@@ -32,8 +51,16 @@ function SearchResult(props) {
                     </button>
                 </div>
 
-                <div className="added-info">
-                    <p> Director:  </p>
+                 <div className="added-info">
+                     <div className="movie-more-info">
+                         <p> Genre: {data["Genre"]} </p>
+                         <p> Director: {data["Director"]} </p>
+                         <p> Actors: {data["Actors"]} </p>
+                         <p> Plot: {data["Plot"]} </p>
+                     </div>
+                     <div className="poster-div">
+                         <img className= "poster" src={data["Poster"]} alt="Movie Poster not Found" />
+                     </div>
                 </div>
 
                 <button className="expand-btn"

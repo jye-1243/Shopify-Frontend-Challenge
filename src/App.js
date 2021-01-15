@@ -44,7 +44,6 @@ function App() {
                 setError(message);
                 setLoading(false);
             })
-
     }, [q]);
 
     useEffect(() => {
