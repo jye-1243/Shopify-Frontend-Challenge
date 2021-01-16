@@ -6,7 +6,7 @@ This provides a simple, easy-to-user interface for users to search for movies by
 ### About the Project
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-### Demo
+## Demo
 A demo of the app can be accessed [here](https://jye-1243.github.io/Shopify-Frontend-Challenge/).
 
 ![Screenshot of the interface](https://github.com/jye-1243/Shopify-Frontend-Challenge/blob/master/public/screenshot.PNG)
