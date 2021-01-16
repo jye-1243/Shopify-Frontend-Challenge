@@ -104,6 +104,10 @@
     border-bottom: 2px solid #5C6AC4;
 }
 
+#nominee-header {
+    border-bottom: 2px solid #50B83C;
+}
+
 .search-item {
     width: 90%;
     background: white;
@@ -160,6 +164,28 @@ h3 {
     height: 30%;
     margin: auto;
     flex: 1;
+
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #5C6AC4;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.nominate-btn:hover {
+    background-color: #202E78;
+}
+
+.nominate-btn:disabled{
+    background-color: #777777;
+}
+
+.nominate-btn:active {
+    background-color: #202E78;
+    transform: translateY(2px);
 }
 
 .remove-btn {
@@ -169,7 +195,24 @@ h3 {
     flex: 1;
     vertical-align: middle;
     justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #50B83C;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
 }
+
+    .remove-btn:hover {
+        background-color: #108043;
+    }
+
+    .remove-btn:active {
+        background-color: #108043;
+        transform: translateY(2px);
+    }
 
 .nominated-panel {
     display: inline;
@@ -178,7 +221,7 @@ h3 {
     margin: 1vw 0vw 1vh 1vw;
     border-radius: 5px;
     height: 65vh;
-    border-top: 5px solid #5C6AC4;
+    border-top: 5px solid #50B83C;
 }
 
 .nominee-list {

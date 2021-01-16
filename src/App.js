@@ -13,39 +13,40 @@ function App() {
     const [value, setValue] = useState('');
     const [q, setQ] = useState('');
     const [data, setData] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    //const [nomList, setNomList] = useState([]);
-    //const [nomCount, setNomCount] = useState(0);
     const [nomList, setNomList] = useState(cookies.noms ? cookies.noms: []);
     const [nomCount, setNomCount] = useState(cookies.count ? parseInt(cookies.count): 0);
     const [banner, setBanner] = useState(null);
+    const [searchMessage, setSearchMessage] = useState("");
 
-    // Figure out whats up here
+    // Fetch data from API when query is updated
     useEffect( () => {
 
-        setLoading(true);
-        setError(null);
         setData([]);
 
         fetch(`https://www.omdbapi.com/?s=${q}&apikey=${API_KEY}`)
             .then(resp => resp.json())
             .then(response => {
                 if (response.Response === 'False') {
-                    setError(response.Error);
+                    console.log(response.Error);
+                    if (q) {
+                        setSearchMessage("No movies found with a title containing: '" + q + "'");
+                    }
+                    else {
+                        setSearchMessage("No movie title was given.")
+                    }
                 }
                 else {
                     setData(response.Search);
+                    setSearchMessage("");
                 }
 
-                setLoading(false);
             })
             .catch(({ message }) => {
-                setError(message);
-                setLoading(false);
+                console.log(message);
             })
     }, [q]);
 
+    // Set nomination banner to open when five movies are nominated
     useEffect(() => {
         if (nomCount === 5) {
             setBanner(
@@ -63,10 +64,12 @@ function App() {
         setCookie('count', val, { path: '/' });
     }, [nomCount]);
 
+    // Return app with search bar, panel for movie searches, and nominees
     return (
         <div className="App">
             <header className="App-header">
                 <h1> SHOPPIES NOMINATIONS </h1>
+
             </header>
 
             <div className="App-body">
@@ -91,39 +94,45 @@ function App() {
                             onClick={() => setQ(value)}> 
                             Search
                         </button>
-                     </div>
+                    </div>
                     <div className="cookies-bar">
                         <button
                             className="main-btn"
                             onClick={
                                 () => {
+                                    // Reset cookies and nom list
                                     setCookie('noms', [], { path: '/' });
                                     setCookie('count', 0, { path: '/' });
                                     setNomCount(0);
                                     setNomList([]);
                                 }
                             }>
-                            Reset Cookies
+                            Reset Selection
                         </button>
 
                         <button
                             className="main-btn"
                             onClick={
                                 () => {
+                                    // Delete cookies and reset nom list
                                     removeCookie('noms');
                                     removeCookie('count');
+
+                                    setNomCount(0);
+                                    setNomList([]);
                                 }
                             }>
                         Remove Cookies
                         </button>
                     </div>
                 </div>
-
+                
                 {banner}
 
                 <div className="movie-panel">
                     <div className="result-panel">
                         <h2 className="movie-header"> SEARCH RESULTS </h2>
+                        <p> {searchMessage} </p>
                         <MovieSearch
                             data={data}
                             nomList={nomList}
@@ -131,13 +140,15 @@ function App() {
                                 (id, title, year) => {
                                     if (nomCount < 5) {
 
+                                        // Allow new searches while fewer than five nominees
                                         let newNomList = [];
 
-                                        // Fix here
+                                        // Set up new nominations list
                                         for (let j = 0; j < nomList.length; j++) {
                                             newNomList.push(nomList[j]);
                                         }
 
+                                        // Add new movie to nom list
                                         newNomList.push(
                                             {
                                                 id: id,
@@ -146,6 +157,7 @@ function App() {
                                             }
                                         )
 
+                                        // Set new nom counts and new nom list
                                         setNomCount(nomCount + 1);
                                         setNomList(newNomList);
 
@@ -157,13 +169,16 @@ function App() {
                     </div>
 
                     <div className="nominated-panel">
-                        <h2 className="movie-header"> NOMINEES </h2>
+                        <h2 className="movie-header" id="nominee-header"> NOMINEES </h2>
 
                         <Nominees
                             nominees={nomList}
                             onClick={
                                 (id) => {
+                                    // Button to remove nominee from nominations
                                     let index = 0;
+
+                                    // Check which button was pressed
                                     for (let j = 0; j < nomList.length; j++) {
 
                                         if (id === nomList[j]["id"]) {
@@ -171,6 +186,7 @@ function App() {
                                         }
                                     }
 
+                                    // Remove corresponding item in nominations list
                                     let updatedNomList = [];
 
                                     for (let j = 0; j < nomList.length; j++) {
@@ -179,10 +195,10 @@ function App() {
                                         }
                                     }
 
+                                    // Set new values
                                     setNomList(updatedNomList);
                                     setCookie('noms', updatedNomList, { path: '/' });
                                     setNomCount(nomCount - 1);
-
 
                                 }
                                             
