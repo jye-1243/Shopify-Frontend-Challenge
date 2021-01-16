@@ -32,7 +32,7 @@ function App() {
                         setSearchMessage("No movies found with a title containing: '" + q + "'");
                     }
                     else {
-                        setSearchMessage("No movie title was given.")
+                        setSearchMessage("No movie title has been searched.")
                     }
                 }
                 else {
@@ -45,6 +45,7 @@ function App() {
                 console.log(message);
             })
     }, [q]);
+
 
     // Set nomination banner to open when five movies are nominated
     useEffect(() => {
