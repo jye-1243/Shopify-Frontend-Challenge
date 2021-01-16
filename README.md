@@ -1,10 +1,15 @@
 # shopify-frontend-challenge
 Shopify Summer 2021 Internship Frontend Challenge
 
+This 
+
 ## Getting Started
 
 
+
 ## Usage
+
+This is a 
 
 ## 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
