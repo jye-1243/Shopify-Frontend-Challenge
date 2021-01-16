@@ -22,7 +22,7 @@ This front-end was built with ReactJS. To requirements to run a React App can be
 
 ## Usage
 
-To run the app, navigate to the appropriate directory and run `npm start`. The app will load in (http://localhost:3000/)[http://localhost:3000/].
+To run the app, navigate to the appropriate directory and run `npm start`. The app will load in http://localhost:3000/.
 
 
 
