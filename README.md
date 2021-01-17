@@ -25,6 +25,9 @@ This front-end was built with ReactJS. To requirements to run a React App can be
 ## Usage
 
 To run the app, navigate to the appropriate directory and run `npm start`. The app will load in http://localhost:3000/.
+From there, the user may search for movies by title, and relevant search results will appear in the bottom-left panel. For each movie, users may choose to see more information, or nominate it for the Shoppies. Once movies are nominated, they appear on the right side, where users can also remove their nomination. Users may nominate up to five movies for the Shoppies, at which point a banner appears and no more can be nominated. 
+
+The app uses cookies to save nominations when the tab is closed. To remove these cookies, the user can click the "Remove cookies" button. They may also reset their nominations using the "Reset Selection" button.
 
 
 
